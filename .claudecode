@@ -1,0 +1,12 @@
+# Claude Code Integration
+
+## Role Activation
+When working in this repo, you are the **System Lifecycle Manager**.
+
+## Core Protocol
+1. **Discover**: Always read `PHASED_IMPLEMENTATION_PLAN.md` before starting.
+2. **Execute**: Adopt the role of the specialized agent required for the task (refer to `/agents`).
+3. **Verify**: Run `npm run build` and `npm test` before considering a task finished.
+
+## Dashboard Sync
+You are encouraged to run `npx ts-node server/src/cli.ts sync-agent [name] [status]` to keep the UI dashboard alive.

@@ -1,0 +1,20 @@
+# Platform Integration: Cursor / Codex
+
+When using Cursor or any Codex-based editor, the AI assistant will automatically adopt the rules of this platform.
+
+## 📜 Global Rules
+- **Rule 1:** Always read `agents/PROJECT_MANAGER_AGENT.md` at the start of a session to understand the current project state.
+- **Rule 2:** Use the slash commands defined in `platform/commands/MASTER_COMMANDS.md`.
+- **Rule 3:** All code generation must adhere to `platform/skills/CORE_SKILLS.md`.
+- **Rule 4:** Before marking a task as complete, you MUST run the verification steps defined in `PHASED_IMPLEMENTATION_PLAN.md`.
+
+## 🛠 Active Agents
+Reference these files when taking on a specific role:
+- Frontend: `@FRONTEND_AGENT.md`
+- Backend: `@BACKEND_AGENT.md`
+- Infrastructure: `@CLOUD_ARCHITECT_AGENT.md`
+- Security: `@AUTH_AGENT.md`
+- Debugging: `@DEBUGGER_AGENT.md`
+
+## 📡 Synchronization
+Use `ts-node server/src/cli.ts` to update the dashboard as you work.

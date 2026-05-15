@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  prompt    String
+  status    String   @default("Clarifying") // Clarifying, Planning, Building, Completed
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questions ClarificationQuestion[]
+  plan      Plan?
+  agents    Agent[]
+  tasks     Task[]
+}
+
+model ClarificationQuestion {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+  question  String
+  answer    String?
+  order     Int
+}
+
+model Plan {
+  id        String  @id @default(cuid())
+  projectId String  @unique
+  project   Project @relation(fields: [projectId], references: [id])
+  content   String // JSON string or markdown
+  approved  Boolean @default(false)
+}
+
+model Agent {
+  id        String  @id @default(cuid())
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+  name      String
+  scope     String
+  status    String  @default("Queued") // Running, Passed, Needs work
+  progress  Int     @default(0)
+  output    String?
+  tasks     Task[]
+}
+
+model Task {
+  id           String   @id @default(cuid())
+  projectId    String
+  project      Project  @relation(fields: [projectId], references: [id])
+  agentId      String?
+  agent        Agent?   @relation(fields: [agentId], references: [id])
+  title        String
+  description  String
+  status       String   @default("Todo") // Todo, InProgress, Done, Failed
+  priority     Int      @default(1)
+  dependencies String? // Comma-separated list of Task IDs
+  output       String?
+  handoffData  String? // JSON data to pass to next agent
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

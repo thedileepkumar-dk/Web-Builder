@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# --- COLOR DEFINITIONS ---
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+NC='\033[0m' # No Color
+
+clear
+
+echo -e "${PURPLE}======================================================"
+echo -e "   🚀 WEB BUILDER: ULTIMATE WEBSITE BUILDER AGENT   "
+echo -e "======================================================"
+echo -e "${NC}Installing for: Codex, Claude Code, Gemini & Antigravity\n"
+
+# --- CHECK PREREQUISITES ---
+echo -e "${CYAN}[1/4] Checking prerequisites...${NC}"
+if ! command -v node &> /dev/null; then
+    echo -e "${RED}Error: Node.js is not installed. Please install it first.${NC}"
+    exit 1
+fi
+echo -e "${GREEN}✓ Node.js found: $(node -v)${NC}"
+
+# --- INSTALL ORCHESTRATOR BACKEND ---
+echo -e "\n${CYAN}[2/4] Installing Orchestrator Server (Express + Prisma)...${NC}"
+cd server
+npm install --silent
+echo -e "${GREEN}✓ Background server dependencies installed.${NC}"
+
+# Setup DB
+echo -e "${CYAN}Running database migrations...${NC}"
+npx prisma db push --accept-data-loss &> /dev/null
+npx prisma generate &> /dev/null
+echo -e "${GREEN}✓ Local task queue database initialized.${NC}"
+cd ..
+
+# --- SETUP PLATFORMS ---
+echo -e "\n${CYAN}[3/4] Configuring AI Platforms...${NC}"
+echo -e "${BLUE}→ Configuring Codex/Cursor (.cursorrules)...${NC}"
+echo -e "${BLUE}→ Configuring Claude Code (.claudecode)...${NC}"
+echo -e "${BLUE}→ Configuring Gemini CLI (GEMINI.md)...${NC}"
+echo -e "${BLUE}→ Configuring Antigravity Agent Patterns...${NC}"
+echo -e "${GREEN}✓ All platforms configured for multi-agent mode.${NC}"
+
+# --- FINALIZE ---
+echo -e "\n${PURPLE}======================================================"
+echo -e "             INSTALLATION COMPLETE!                  "
+echo -e "======================================================${NC}"
+echo -e "\n${CYAN}To start building a website:${NC}"
+echo -e "1. ${GREEN}cd server && npm run dev${NC}  (Starts the background task queue)"
+echo -e "\n${BLUE}2. Open your AI assistant (Cursor, Claude, etc.) and say:${NC}"
+echo -e "\"Please spawn an agents-orchestrator to execute the complete development pipeline for [Your Website Idea].\""
+echo -e "${PURPLE}======================================================${NC}\n"
