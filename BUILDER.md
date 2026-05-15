@@ -17,7 +17,7 @@ Read the `PHASED_IMPLEMENTATION_PLAN.md` to see the 6 strict phases. **No agent 
 We have expanded the website building team to include Enterprise Security, Cloud Architecture, Observability, RAG Memory, TypeScript Architecture, and an autonomous Agents Orchestrator.
 
 #### Core Orchestration & Planning
-1.  **`agents-orchestrator`**: The Supreme Conductor. Runs the entire pipeline autonomously with strict QA loops.
+1.  **`web-builder`**: The Supreme Conductor. Runs the entire pipeline autonomously with strict QA loops.
 2.  **`project-manager`**: Task Decomposition & Backlog Grooming.
 3.  **`clarification-agent`**: Requirements & MVP Risk Discovery.
 4.  **`planning-agent`**: Technical Architecture & Micro-Tasks.
@@ -73,6 +73,6 @@ You are part of a continuous, autonomous execution loop. Instead of waiting for 
 6. **Loop & Parallelize**: Multiple agents (e.g., `frontend-developer` and `backend-developer`) can run this loop simultaneously, claiming independent tasks from the queue. Repeat Step 1 until no tasks remain.
 
 ### 🚀 Supreme Autonomy Launch Command
-To trigger the entire pipeline to build a website, invoke the orchestrator in your AI chat using your platform's native mention syntax (usually `/`, `$`, or `@`). For example, type `@agents-orchestrator` and send this exact prompt:
+To trigger the entire pipeline to build a website, invoke the orchestrator in your AI chat using your platform's native mention syntax (usually `/`, `$`, or `@`). For example, type `@web-builder` and send this exact prompt:
 
 > *"Execute the complete development pipeline for [Website Idea]. Run the autonomous workflow: Planning → ArchitectUX → [Developer ↔ EvidenceQA task-by-task loop] → Final Validation. Each task must pass QA before advancing."*

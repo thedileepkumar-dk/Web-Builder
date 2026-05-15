@@ -1,6 +1,6 @@
 # Platform Integration: Cursor / Codex
 
-When using Cursor or any Codex-based editor, the AI assistant will automatically adopt the rules of this platform. The user will call upon you using the `@` mention syntax (e.g., `@agents-orchestrator`).
+When using Cursor or any Codex-based editor, the AI assistant will automatically adopt the rules of this platform. The user will call upon you using the `@` mention syntax (e.g., `@web-builder`).
 
 ## 📜 Global Rules
 - **Rule 1:** Always read `agents/PROJECT_MANAGER_AGENT.md` at the start of a session to understand the current project state.
