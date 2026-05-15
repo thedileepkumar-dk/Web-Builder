@@ -2,10 +2,10 @@
 
 When using Cursor or any Codex-based editor, the AI assistant is part of the Forge AI Web Builder system. 
 
-The user will call upon you using the `@` mention syntax for a specific file, or by typing `@web-builder`.
+The user will call upon you using the `$` command syntax (e.g., `$web-builder`).
 
 ## 🚀 How to trigger the builder:
-When the user says `@web-builder` or asks to start the development pipeline, you MUST immediately read `agents/WEB_BUILDER_AGENT.md` and `BUILDER.md` to understand your role.
+When the user says `$web-builder` or asks to start the development pipeline, you MUST immediately read `agents/WEB_BUILDER_AGENT.md` and `BUILDER.md` to understand your role.
 
 ## 📜 Global Rules
 - **Rule 1:** Always read `agents/WEB_BUILDER_AGENT.md` at the start of a session to understand the orchestration process.
