@@ -73,6 +73,6 @@ You are part of a continuous, autonomous execution loop. Instead of waiting for 
 6. **Loop & Parallelize**: Multiple agents (e.g., `frontend-developer` and `backend-developer`) can run this loop simultaneously, claiming independent tasks from the queue. Repeat Step 1 until no tasks remain.
 
 ### 🚀 Supreme Autonomy Launch Command
-To trigger the entire pipeline to build a website, the user will send this exact prompt to you:
+To trigger the entire pipeline to build a website, invoke the orchestrator in your AI chat using your platform's native mention syntax (usually `/`, `$`, or `@`). For example, type `@agents-orchestrator` and send this exact prompt:
 
-> *"Please spawn an `agents-orchestrator` to execute the complete development pipeline for [Website Idea]. Run the autonomous workflow: Planning → ArchitectUX → [Developer ↔ EvidenceQA task-by-task loop] → Final Validation. Each task must pass QA before advancing."*
+> *"Execute the complete development pipeline for [Website Idea]. Run the autonomous workflow: Planning → ArchitectUX → [Developer ↔ EvidenceQA task-by-task loop] → Final Validation. Each task must pass QA before advancing."*

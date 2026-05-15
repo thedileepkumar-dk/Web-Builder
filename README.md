@@ -33,9 +33,10 @@ Code is never accepted just because the AI generated it. Every task goes through
 
 ## 📦 One-Command Installation
 
-To install the framework, dependencies, database, and platform-specific configurations (`.cursorrules`, `.claudecode`, etc.), run a single command in your terminal:
+To install the framework, dependencies, database, and platform-specific configurations (`.cursorrules`, `.claudecode`, etc.), navigate to the project directory and run the installation script:
 
 ```bash
+cd path/to/Web-Builder
 sh install.sh
 ```
 
@@ -45,10 +46,10 @@ sh install.sh
 
 You don't need a separate API key or a web dashboard. Forge AI uses the AI assistant you are already running in your editor. It runs 100% serverless on top of a local SQLite database.
 
-1. **Launch the Orchestrator in your AI Chat:**
-   Open your AI Chat (e.g., in Cursor or Claude Code) and paste the following command:
+1. **Call the Orchestrator in your AI Chat:**
+   Open your AI Chat (e.g., in Cursor, Claude Code, or Gemini CLI) and call the orchestrator using your platform's native mention syntax (usually `/`, `$`, or `@`). For example, type `@agents-orchestrator` and paste the following command:
 
-   > *"Please spawn an `agents-orchestrator` to execute the complete development pipeline for [Your Website Idea]. Run the autonomous workflow: Planning → ArchitectUX → [Developer ↔ EvidenceQA task-by-task loop] → Final Validation. Each task must pass QA before advancing."*
+   > *"Execute the complete development pipeline for [Your Website Idea]. Run the autonomous workflow: Planning → ArchitectUX → [Developer ↔ EvidenceQA task-by-task loop] → Final Validation. Each task must pass QA before advancing."*
 
 The AI will immediately read the instruction files, adopt the Orchestrator persona, and begin delegating tasks to the other 20 agents, building your website autonomously.
 

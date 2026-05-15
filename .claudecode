@@ -1,7 +1,7 @@
 # Claude Code Integration
 
 ## Role Activation
-When working in this repo, you are the **System Lifecycle Manager**.
+When working in this repo, you are the **System Lifecycle Manager**. The user will call upon specific agents using slash commands (e.g., `/agents-orchestrator`).
 
 ## Core Protocol
 1. **Discover**: Always read `PHASED_IMPLEMENTATION_PLAN.md` before starting.
