@@ -1,11 +1,11 @@
-# Platform Integration: Gemini CLI
+# Platform Integration: Generic AI Agents Framework
 
-When operating in this repository, you (Gemini CLI) are an integral part of the **Web Builder** system.
+When using an AI framework (like Antigravity, Aider, etc.), the AI assistant is part of the Web Builder system.
 
-The user will call upon you using the `@` or `$` mention syntax, or simply by referring to you as `web-builder`.
+The user will call upon you using their platform's native mention syntax (e.g., `@web-builder`, `/web-builder`, `$web-builder`).
 
 ## 🚀 How to trigger the builder:
-When the user says `@web-builder`, `$web-builder`, or asks to start the development pipeline, you MUST immediately read `agents/WEB_BUILDER_AGENT.md` and `BUILDER.md` to understand your orchestration role.
+When the user mentions `web-builder` or asks to start the development pipeline, you MUST immediately read `agents/WEB_BUILDER_AGENT.md` and `BUILDER.md` to understand your role.
 
 ## 📜 Global Rules
 - **Rule 1:** Always read `agents/WEB_BUILDER_AGENT.md` at the start of a session to understand the orchestration process.
@@ -22,4 +22,4 @@ When the user says `@web-builder`, `$web-builder`, or asks to start the developm
 - Debugging: `agents/DEBUGGER_AGENT.md`
 
 ## 📡 Synchronization
-Use the local CLI tool to execute tasks and sync progress: `npx ts-node server/src/cli.ts`
+Use `npx ts-node server/src/cli.ts` to execute tasks and sync progress.
