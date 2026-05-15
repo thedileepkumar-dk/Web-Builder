@@ -3,29 +3,67 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = __importDefault(require("axios"));
+const client_1 = require("@prisma/client");
 const child_process_1 = require("child_process");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
-const API_BASE = "http://localhost:4000";
+const prisma = new client_1.PrismaClient();
 async function runCommand() {
     const args = process.argv.slice(2);
     const command = args[0];
     try {
-        if (command === "sync-questions") {
-            // ... Skip everything until the last else if
-            // I'll use a targeted replacement for the end of the file instead of the whole file.
+        if (command === "create-project") {
+            const prompt = args[1];
+            const project = await prisma.project.create({
+                data: {
+                    prompt,
+                    status: "Clarifying",
+                    agents: {
+                        create: [
+                            {
+                                name: "Clarification Agent",
+                                scope: "Analyzing prompt and asking questions",
+                                status: "Running",
+                                progress: 10,
+                            },
+                        ],
+                    },
+                },
+            });
+            console.log(`✅ Project created: ${project.id}`);
+        }
+        else if (command === "sync-questions") {
             const projectId = args[1];
             const questions = JSON.parse(args[2]);
-            await axios_1.default.patch(`${API_BASE}/api/projects/${projectId}`, { questions });
+            await prisma.project.update({
+                where: { id: projectId },
+                data: { status: "Clarify" },
+            });
+            await prisma.clarificationQuestion.deleteMany({ where: { projectId } });
+            await prisma.clarificationQuestion.createMany({
+                data: questions.map((q, i) => ({
+                    projectId,
+                    question: q.question,
+                    answer: q.answer,
+                    order: i,
+                })),
+            });
             console.log("✅ Questions synced.");
         }
         else if (command === "sync-plan") {
             const projectId = args[1];
             const content = args[2];
-            await axios_1.default.patch(`${API_BASE}/api/projects/${projectId}`, {
-                plan: { content },
+            const existingPlan = await prisma.plan.findUnique({
+                where: { projectId },
             });
+            if (existingPlan) {
+                await prisma.plan.update({ where: { projectId }, data: { content } });
+            }
+            else {
+                await prisma.plan.create({
+                    data: { projectId, content, approved: false },
+                });
+            }
             console.log("✅ Plan synced.");
         }
         else if (command === "create-task") {
@@ -33,58 +71,157 @@ async function runCommand() {
             const title = args[2];
             const description = args[3];
             const agentName = args[4];
-            const dependencies = args[5] ? args[5].split(",") : [];
-            const res = await axios_1.default.post(`${API_BASE}/api/projects/${projectId}/tasks`, { title, description, agentName, dependencies });
-            console.log(`✅ Task created: ${res.data.id}`);
+            const dependencies = args[5] ? args[5] : null;
+            let agent = await prisma.agent.findFirst({
+                where: { projectId, name: agentName },
+            });
+            if (!agent) {
+                agent = await prisma.agent.create({
+                    data: {
+                        projectId,
+                        name: agentName,
+                        scope: "Autonomous Execution",
+                        status: "Queued",
+                    },
+                });
+            }
+            const task = await prisma.task.create({
+                data: {
+                    projectId,
+                    agentId: agent.id,
+                    title,
+                    description,
+                    dependencies,
+                },
+            });
+            console.log(`✅ Task created: ${task.id}`);
         }
         else if (command === "claim-task") {
             const projectId = args[1];
             const agentName = args[2];
-            const res = await axios_1.default.post(`${API_BASE}/api/projects/${projectId}/tasks/claim`, { agentName });
-            if (res.data) {
-                console.log(`✅ Claimed task: ${res.data.id} - ${res.data.title}`);
-                console.log(`Description: ${res.data.description}`);
-            }
-            else {
+            const agent = await prisma.agent.findFirst({
+                where: { projectId, name: agentName },
+            });
+            if (!agent) {
                 console.log(`No pending tasks for ${agentName}.`);
+                return;
             }
+            const tasks = await prisma.task.findMany({
+                where: { projectId, agentId: agent.id, status: "Todo" },
+                orderBy: [{ priority: "desc" }, { createdAt: "asc" }],
+            });
+            let taskToClaim = null;
+            for (const t of tasks) {
+                if (!t.dependencies) {
+                    taskToClaim = t;
+                    break;
+                }
+                const depIds = t.dependencies
+                    .split(",")
+                    .map((id) => id.trim())
+                    .filter(Boolean);
+                if (depIds.length === 0) {
+                    taskToClaim = t;
+                    break;
+                }
+                const pendingDeps = await prisma.task.count({
+                    where: {
+                        id: { in: depIds },
+                        status: { not: "Done" },
+                    },
+                });
+                if (pendingDeps === 0) {
+                    taskToClaim = t;
+                    break;
+                }
+            }
+            if (!taskToClaim) {
+                console.log(`No pending tasks for ${agentName}.`);
+                return;
+            }
+            const updatedTask = await prisma.task.update({
+                where: { id: taskToClaim.id },
+                data: { status: "InProgress" },
+            });
+            await prisma.agent.update({
+                where: { id: agent.id },
+                data: { status: "Running", output: `Working on: ${taskToClaim.title}` },
+            });
+            console.log(`✅ Claimed task: ${updatedTask.id} - ${updatedTask.title}`);
+            console.log(`Description: ${updatedTask.description}`);
         }
         else if (command === "complete-task") {
             const taskId = args[1];
             const output = args[2];
-            const handoffData = args[3];
-            await axios_1.default.patch(`${API_BASE}/api/tasks/${taskId}`, {
-                status: "Done",
-                output,
-                handoffData,
+            const handoffData = args[3] || null;
+            const task = await prisma.task.update({
+                where: { id: taskId },
+                data: { status: "Done", output, handoffData },
             });
+            if (task.agentId) {
+                await prisma.agent.update({
+                    where: { id: task.agentId },
+                    data: { status: "Passed", output },
+                });
+            }
             console.log(`✅ Task ${taskId} marked as Done.`);
         }
         else if (command === "fail-task") {
             const taskId = args[1];
             const output = args[2];
-            const res = await axios_1.default.patch(`${API_BASE}/api/tasks/${taskId}`, {
-                status: "Failed",
-                output,
+            const task = await prisma.task.update({
+                where: { id: taskId },
+                data: { status: "Failed", output },
             });
-            // Trigger debugger
-            await axios_1.default.post(`${API_BASE}/api/projects/${res.data.projectId}/tasks`, {
-                title: `Fix Task ${taskId}`,
-                description: `Task failed with error: ${output}`,
-                agentName: "Debugger Agent",
+            if (task.agentId) {
+                await prisma.agent.update({
+                    where: { id: task.agentId },
+                    data: { status: "Needs work", output },
+                });
+            }
+            let debuggerAgent = await prisma.agent.findFirst({
+                where: { projectId: task.projectId, name: "Debugger Agent" },
+            });
+            if (!debuggerAgent) {
+                debuggerAgent = await prisma.agent.create({
+                    data: {
+                        projectId: task.projectId,
+                        name: "Debugger Agent",
+                        scope: "Fixing bugs",
+                        status: "Queued",
+                    },
+                });
+            }
+            await prisma.task.create({
+                data: {
+                    projectId: task.projectId,
+                    agentId: debuggerAgent.id,
+                    title: `Fix Task ${taskId}`,
+                    description: `Task failed with error: ${output}`,
+                },
             });
             console.log(`❌ Task ${taskId} marked as Failed. Debugger Agent triggered.`);
         }
         else if (command === "task-status") {
             const projectId = args[1];
-            const res = await axios_1.default.get(`${API_BASE}/api/projects/${projectId}/tasks/status`);
+            const tasks = await prisma.task.findMany({
+                where: { projectId },
+                include: { agent: true },
+            });
+            const summary = {
+                total: tasks.length,
+                todo: tasks.filter((t) => t.status === "Todo").length,
+                inProgress: tasks.filter((t) => t.status === "InProgress").length,
+                done: tasks.filter((t) => t.status === "Done").length,
+                failed: tasks.filter((t) => t.status === "Failed").length,
+            };
             console.log(`📊 Task Status for Project ${projectId}:`);
-            console.log(`Total: ${res.data.total} | Todo: ${res.data.todo} | InProgress: ${res.data.inProgress} | Done: ${res.data.done} | Failed: ${res.data.failed}`);
+            console.log(`Total: ${summary.total} | Todo: ${summary.todo} | InProgress: ${summary.inProgress} | Done: ${summary.done} | Failed: ${summary.failed}`);
             console.log(`Active/Pending Tasks:`);
-            res.data.tasks
+            tasks
                 .filter((t) => t.status !== "Done")
                 .forEach((t) => {
-                console.log(`- [${t.id}] ${t.title} (${t.status}) -> ${t.agent}`);
+                console.log(`- [${t.id}] ${t.title} (${t.status}) -> ${t.agent?.name || "Unassigned"}`);
             });
         }
         else if (command === "run-visual-audit") {
@@ -126,11 +263,14 @@ async function runCommand() {
             console.log(`🧠 Project Fact Sheet updated.`);
         }
         else {
-            console.log("Unknown command. Available commands: sync-questions, sync-plan, create-task, claim-task, complete-task, fail-task, task-status, run-visual-audit, save-adr, update-fact-sheet");
+            console.log("Unknown command. Available commands: create-project, sync-questions, sync-plan, create-task, claim-task, complete-task, fail-task, task-status, run-visual-audit, save-adr, update-fact-sheet");
         }
     }
     catch (error) {
-        console.error("❌ Command failed:", error.response?.data || error.message);
+        console.error("❌ Command failed:", error.message);
+    }
+    finally {
+        await prisma.$disconnect();
     }
 }
 runCommand();

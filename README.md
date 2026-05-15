@@ -23,7 +23,7 @@ Instead of a single AI trying to do everything, Web Builder provides specialized
 - *...and 16 more domain experts.*
 
 ### ⚡ "God Mode" Capabilities
-- **Autonomous Task Queue:** A local Node.js/Prisma background service orchestrates tasks. Agents pull work, execute, and pass data to the next agent autonomously.
+- **Autonomous Task Queue:** A serverless Node.js/Prisma CLI orchestrates tasks directly via a local SQLite database. Agents pull work, execute, and pass data to the next agent autonomously without needing a background server running.
 - **Visual Self-Healing:** The platform integrates **Playwright**. If a UI test fails or layout breaks, the QA agent captures a screenshot and hands it to the Designer agent to autonomously fix CSS and layout bugs.
 
 ### 🛡️ Strict Quality Gates
@@ -43,13 +43,9 @@ sh install.sh
 
 ## 🚀 How to Use
 
-You don't need a separate API key or a web dashboard. Web Builder uses the AI assistant you are already running in your editor.
+You don't need a separate API key or a web dashboard. Forge AI uses the AI assistant you are already running in your editor. It runs 100% serverless on top of a local SQLite database.
 
-1. **Start the Orchestration Server (Background Service):**
-   ```bash
-   cd server && npm run dev
-   ```
-2. **Launch the Orchestrator in your AI Chat:**
+1. **Launch the Orchestrator in your AI Chat:**
    Open your AI Chat (e.g., in Cursor or Claude Code) and paste the following command:
 
    > *"Please spawn an `agents-orchestrator` to execute the complete development pipeline for [Your Website Idea]. Run the autonomous workflow: Planning → ArchitectUX → [Developer ↔ EvidenceQA task-by-task loop] → Final Validation. Each task must pass QA before advancing."*
@@ -64,7 +60,7 @@ The AI will immediately read the instruction files, adopt the Orchestrator perso
 - `/platform/skills`: Global rulebooks (Clean Code, React Best Practices, UI/UX Design Systems).
 - `/platform/commands`: Master slash-commands for manual AI control.
 - `/platform/hooks`: Automated scripts (Lint-on-save, security scans).
-- `/server`: The local background Task Queue and Orchestration API.
+- `/server`: The local CLI logic and Prisma database schemas.
 - `BUILDER.md`: The master manual for the host AI.
 - `PHASED_IMPLEMENTATION_PLAN.md`: The strict 6-phase verification logic.
 

@@ -9,7 +9,7 @@ Agents no longer "write and hope." They operate under a strict Verification-Driv
 Read the `PHASED_IMPLEMENTATION_PLAN.md` to see the 6 strict phases. **No agent can move to the next phase until the Verification Gate (tests, builds, security scans) passes 100%.**
 
 ### 2. God Mode Capabilities (Full Autonomy)
-- **Autonomous Task Queue:** Agents pull work from the `server/src/cli.ts` background bridge, allowing multi-agent parallel execution.
+- **Autonomous Task Queue:** Agents pull work from the `server/src/cli.ts` bridge directly connected to the local database, allowing multi-agent parallel execution without a background server.
 - **Visual Self-Healing:** Agents run Playwright to capture screenshots (`run-visual-audit`) and automatically fix CSS/layout bugs.
 - **Infinite Context (RAG):** The `memory-archivist` automatically writes ADRs and updates the `PROJECT_FACT_SHEET.md` to prevent "Architecture Drift" on massive websites.
 
@@ -61,7 +61,7 @@ We have expanded the website building team to include Enterprise Security, Cloud
 ## 🛠 Usage Instructions (Autonomous Mode)
 
 ### For Host AI (Cursor, Codex, Gemini CLI)
-You are part of a continuous, autonomous execution loop. Instead of waiting for user prompts, you pull work from the background task queue database and can operate in parallel with other agents.
+You are part of a continuous, autonomous execution loop. Instead of waiting for user prompts, you pull work directly from the local SQLite database via the CLI and can operate in parallel with other agents.
 
 1. **Check Status**: Run `npx ts-node server/src/cli.ts task-status [projectId]` to view all active and pending tasks, including their dependencies.
 2. **Check for Work**: Run `npx ts-node server/src/cli.ts claim-task [projectId] "[Your Agent Name]"`. *Note: The system automatically prevents you from claiming tasks whose dependencies are not yet 'Done'.*

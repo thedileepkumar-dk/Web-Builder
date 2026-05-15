@@ -24,10 +24,10 @@ fi
 echo -e "${GREEN}✓ Node.js found: $(node -v)${NC}"
 
 # --- INSTALL ORCHESTRATOR BACKEND ---
-echo -e "\n${CYAN}[2/4] Installing Orchestrator Server (Express + Prisma)...${NC}"
+echo -e "\n${CYAN}[2/4] Installing Orchestrator CLI (Prisma)...${NC}"
 cd server
 npm install --silent
-echo -e "${GREEN}✓ Background server dependencies installed.${NC}"
+echo -e "${GREEN}✓ CLI dependencies installed.${NC}"
 
 # Setup DB
 echo -e "${CYAN}Running database migrations...${NC}"
@@ -49,7 +49,6 @@ echo -e "\n${PURPLE}======================================================"
 echo -e "             INSTALLATION COMPLETE!                  "
 echo -e "======================================================${NC}"
 echo -e "\n${CYAN}To start building a website:${NC}"
-echo -e "1. ${GREEN}cd server && npm run dev${NC}  (Starts the background task queue)"
-echo -e "\n${BLUE}2. Open your AI assistant (Cursor, Claude, etc.) and say:${NC}"
+echo -e "Open your AI assistant (Cursor, Claude, etc.) and say:"
 echo -e "\"Please spawn an agents-orchestrator to execute the complete development pipeline for [Your Website Idea].\""
 echo -e "${PURPLE}======================================================${NC}\n"
