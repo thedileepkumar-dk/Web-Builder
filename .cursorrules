@@ -1,20 +1,25 @@
 # Platform Integration: Cursor / Codex
 
-When using Cursor or any Codex-based editor, the AI assistant will automatically adopt the rules of this platform. The user will call upon you using the `@` mention syntax (e.g., `@web-builder`).
+When using Cursor or any Codex-based editor, the AI assistant is part of the Forge AI Web Builder system. 
+
+The user will call upon you using the `@` mention syntax for a specific file, or by typing `@web-builder`.
+
+## 🚀 How to trigger the builder:
+When the user says `@web-builder` or asks to start the development pipeline, you MUST immediately read `agents/WEB_BUILDER_AGENT.md` and `BUILDER.md` to understand your role.
 
 ## 📜 Global Rules
-- **Rule 1:** Always read `agents/PROJECT_MANAGER_AGENT.md` at the start of a session to understand the current project state.
+- **Rule 1:** Always read `agents/WEB_BUILDER_AGENT.md` at the start of a session to understand the orchestration process.
 - **Rule 2:** Use the slash commands defined in `platform/commands/MASTER_COMMANDS.md`.
 - **Rule 3:** All code generation must adhere to `platform/skills/CORE_SKILLS.md`.
 - **Rule 4:** Before marking a task as complete, you MUST run the verification steps defined in `PHASED_IMPLEMENTATION_PLAN.md`.
 
-## 🛠 Active Agents
-Reference these files when taking on a specific role:
-- Frontend: `@FRONTEND_AGENT.md`
-- Backend: `@BACKEND_AGENT.md`
-- Infrastructure: `@CLOUD_ARCHITECT_AGENT.md`
-- Security: `@AUTH_AGENT.md`
-- Debugging: `@DEBUGGER_AGENT.md`
+## 🛠 Active Agents (Reference these files)
+- Orchestrator: `agents/WEB_BUILDER_AGENT.md`
+- Frontend: `agents/FRONTEND_AGENT.md`
+- Backend: `agents/BACKEND_AGENT.md`
+- Infrastructure: `agents/CLOUD_ARCHITECT_AGENT.md`
+- Security: `agents/AUTH_AGENT.md`
+- Debugging: `agents/DEBUGGER_AGENT.md`
 
 ## 📡 Synchronization
-Use `ts-node server/src/cli.ts` to update the dashboard as you work.
+Use `npx ts-node server/src/cli.ts` to execute tasks and sync progress.
