@@ -42,7 +42,25 @@ echo -e "${BLUE}→ Configuring Codex/Cursor (.cursorrules)...${NC}"
 echo -e "${BLUE}→ Configuring Claude Code (.claudecode)...${NC}"
 echo -e "${BLUE}→ Configuring Gemini CLI (GEMINI.md)...${NC}"
 echo -e "${BLUE}→ Configuring Antigravity Agent Patterns...${NC}"
-echo -e "${GREEN}✓ All platforms configured for multi-agent mode.${NC}"
+
+# Global Registration for Codex & Antigravity
+echo -e "${BLUE}→ Registering agents globally for Codex/Antigravity...${NC}"
+for file in agents/*.md; do
+  skill_name=$(basename "$file" .md | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g' | sed 's/-agent//g')
+  if [ "$skill_name" = "web-builder-agent" ]; then skill_name="web-builder"; fi
+  mkdir -p ~/.codex/skills/"$skill_name" ~/.agents/skills/"$skill_name" &>/dev/null
+  cp "$file" ~/.codex/skills/"$skill_name"/SKILL.md &>/dev/null
+  cp "$file" ~/.agents/skills/"$skill_name"/SKILL.md &>/dev/null
+done
+
+for file in platform/skills/*.md; do
+  skill_name=$(basename "$file" .md | tr '[:upper:]' '[:lower:]' | sed 's/_/-/g')
+  mkdir -p ~/.codex/skills/"$skill_name" ~/.agents/skills/"$skill_name" &>/dev/null
+  cp "$file" ~/.codex/skills/"$skill_name"/SKILL.md &>/dev/null
+  cp "$file" ~/.agents/skills/"$skill_name"/SKILL.md &>/dev/null
+done
+
+echo -e "${GREEN}✓ All platforms configured and agents registered globally.${NC}"
 
 # --- FINALIZE ---
 echo -e "\n${PURPLE}======================================================"
